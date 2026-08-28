@@ -25,11 +25,71 @@ To implement MESSAGE AUTHENTICATION CODE(MAC)
 5. Security: The security of the MAC relies on the secret key \( K \) and the strength of the hash function \( H \), ensuring that an attacker cannot forge a valid MAC without knowledge of the key.
 
 ## Program:
+```
+#include <stdio.h>
+#include <string.h>
 
+#define KEY "secretkey"   // Shared secret key
 
+// Function to calculate a simple MAC using XOR
+unsigned int calculate_mac(const char *message, const char *key)
+{
+    unsigned int mac = 0;
+    int i;
+
+    // XOR all characters of the message
+    for (i = 0; i < strlen(message); i++)
+    {
+        mac ^= message[i];
+    }
+
+    // XOR all characters of the key
+    for (i = 0; i < strlen(key); i++)
+    {
+        mac ^= key[i];
+    }
+
+    return mac;
+}
+
+int main()
+{
+    char message[256];
+    unsigned int mac_sent, mac_received;
+
+    // Input message from user
+    printf("Enter the message: ");
+    fgets(message, sizeof(message), stdin);
+
+    // Remove newline character
+    message[strcspn(message, "\n")] = '\0';
+
+    // Sender generates MAC
+    mac_sent = calculate_mac(message, KEY);
+
+    printf("Generated MAC (sent): %u\n", mac_sent);
+
+    // Receiver calculates MAC using the same key
+    mac_received = calculate_mac(message, KEY);
+
+    printf("Calculated MAC (received): %u\n", mac_received);
+
+    // Check whether MACs match
+    if (mac_sent == mac_received)
+    {
+        printf("Message is authentic.\n");
+    }
+    else
+    {
+        printf("Message integrity check failed.\n");
+    }
+
+    return 0;
+}
+```
 
 ## Output:
-
+<img width="1636" height="727" alt="image" src="https://github.com/user-attachments/assets/59664c28-2e69-475f-9de7-7d3da0a27296" />
 
 ## Result:
 The program is executed successfully.
